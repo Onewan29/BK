@@ -14,6 +14,11 @@ class pelanggaran_model extends CI_Model
         return $this->db->get('pelanggaran');
     }
 
+    public function detailTampil($where)
+    {
+        return $this->db->get_where('pelanggaran', $where);
+    }
+
     public function getPelanggaran($perekapan, $nis)
     {
         $this->db->join('kp', 'kp.id_kp = pelanggaran.id_kp');

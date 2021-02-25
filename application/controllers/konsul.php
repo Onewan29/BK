@@ -9,7 +9,7 @@ class konsul extends CI_Controller
     {
         parent::__construct();
         $this->load->library('form_validation');
-        $this->load->model("konsul_model");
+        $this->load->model("Konsul_model");
         $this->load->model("siswa_model");
         $this->load->model("guru_model");
         $this->load->model("jurusan_model");
@@ -27,8 +27,8 @@ class konsul extends CI_Controller
         $data['siswa'] = $this->siswa_model->tampil_data()->result();
         $data['kelas'] = $this->jurusan_model->tampil_data()->result();
         $data['guru'] = $this->guru_model->tampil_data()->result();
-        $data['perekapan'] = $this->konsul_model->panggil_perekapan();
-        $data['konsultasi'] = $this->konsul_model->gabung();
+        $data['perekapan'] = $this->Konsul_model->panggil_perekapan();
+        $data['konsultasi'] = $this->Konsul_model->gabung();
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
         $this->load->view('konsul', $data);
@@ -50,7 +50,7 @@ class konsul extends CI_Controller
         $data['ws'] = $this->siswa_model->tampil_data()->result();
         $data['rg'] = $this->guru_model->tampil_data()->result();
         $data['kd'] = $this->jurusan_model->tampil_data()->result();
-        $data['perekapan'] = $this->konsul_model->panggil_perekapan();
+        $data['perekapan'] = $this->Konsul_model->panggil_perekapan();
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
         $this->load->view('konsul_form', $data);
@@ -85,7 +85,7 @@ class konsul extends CI_Controller
 
 
             );
-            $this->konsul_model->input_data($data);
+            $this->Konsul_model->input_data($data);
             $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
             Data berhasil di tambahkan!
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -103,6 +103,7 @@ class konsul extends CI_Controller
             redirect('konsul');
         }
     }
+
     public function _rules()
     {
 
@@ -118,20 +119,20 @@ class konsul extends CI_Controller
     public function update($id)
     {
         $where = array('id_konsultasi' => $id);
-        $data['konsultasi'] = $this->konsul_model->edit_data(
+        $data['konsultasi'] = $this->Konsul_model->edit_data(
             $where,
             'konsultasi'
         )->result();
         $data['ws'] = $this->siswa_model->tampil_data()->result();
         $data['rg'] = $this->guru_model->tampil_data()->result();
         $data['kd'] = $this->jurusan_model->tampil_data()->result();
-        $data['perekapan'] = $this->konsul_model->panggil_perekapan();
+        $data['perekapan'] = $this->Konsul_model->panggil_perekapan();
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
         $this->load->view('konsul_update', $data);
         $this->load->view('template/footer');
     }
-    public function update_aksi($id)
+    public function update_aksi()
     {
         $id_siswa = $this->input->post('id_siswa');
         $id_guru = $this->input->post('id_guru');
@@ -143,7 +144,6 @@ class konsul extends CI_Controller
         $id_perekapan = $this->input->post('id_perekapan');
 
         $data = array(
-
             'id_siswa'    => $id_siswa,
             'id_guru'     => $id_guru,
             'id_KJ'     => $id_KJ,
@@ -154,9 +154,9 @@ class konsul extends CI_Controller
             'id_perekapan'                 => $id_perekapan,
         );
         $where = array(
-            'id_konsultasi' => $id
+            'id_konsultasi' => $this->input->post('id_konsul')
         );
-        $this->konsul_model->update_data($where, $data, 'konsultasi');
+        $this->Konsul_model->update_data($where, $data, 'konsultasi');
         $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
             Data Berhasil di Update!
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -168,13 +168,21 @@ class konsul extends CI_Controller
 
     public function getDetail_update()
     {
-        $dataKonsul = $this->konsul_model->cari_gabung($this->input->post('id_konsul'));
-        $data['nis'] = $dataKonsul->id_siswa;
-        $data['nip'] = $dataKonsul->id_guru;
-        $data['kodeKelas'] = $dataKonsul->id_KJ;
-        $data['semester'] = $dataKonsul->id_perekapan;
-        $data['tanggal'] = $dataKonsul->tanggal;
-        $data['catatan'] = $dataKonsul->catatan;
+        $dataKonsul = $this->Konsul_model->cari_gabung($this->input->post('id_konsul'));
+        if ($dataKonsul != null) {
+            $data['sukses'] = 'sukses';
+            $data['id_konsul'] = $dataKonsul->id_konsultasi;
+            $data['nis'] = $dataKonsul->id_siswa;
+            $data['nip'] = $dataKonsul->id_guru;
+            $data['kodeKelas'] = $dataKonsul->id_KJ;
+            $data['namaKelas'] = $dataKonsul->kelas;
+            $data['namaJurusan'] = $dataKonsul->nama_jurusan;
+            $data['semester'] = $dataKonsul->id_perekapan;
+            $data['tanggal'] = $dataKonsul->tanggal;
+            $data['catatan'] = $dataKonsul->catatan;
+        } else {
+            $data['sukses'] = 'gagal';
+        }
         echo json_encode($data);
     }
 
@@ -184,7 +192,7 @@ class konsul extends CI_Controller
         if ($this->session->userdata('level') == 'admin') {
             # code...
             $where = array('id_konsultasi' => $id);
-            $this->konsul_model->hapus_data($where, 'konsultasi');
+            $this->Konsul_model->hapus_data($where, 'konsultasi');
             $this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
         Data Berhasil di Hapus!
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -198,7 +206,7 @@ class konsul extends CI_Controller
     public function info_konsul($id_konsultasi)
     {
 
-        $data['konsultasi'] = $this->konsul_model->gabung_sk($id_konsultasi);
+        $data['konsultasi'] = $this->Konsul_model->gabung_sk($id_konsultasi);
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
         $this->load->view('info_konsul', $data);
@@ -209,7 +217,7 @@ class konsul extends CI_Controller
     public function ajx_load()
     {
         $id_KJ = $this->input->get('id_KJ');
-        if ($kj = $this->konsul_model->autoload($id_KJ)) {
+        if ($kj = $this->Konsul_model->autoload($id_KJ)) {
             $data = array(
                 'nama_jurusan' => $kj->nama_jurusan,
                 'kelas' => $kj->Kelas
@@ -224,7 +232,7 @@ class konsul extends CI_Controller
     public function detailSiswa()
     {
         $data =  [
-            'konsultasi' => $this->konsul_model->tampil_data(['siswa.id_siswa' => $this->session->userdata('id_user')])->result()
+            'konsultasi' => $this->Konsul_model->tampil_data(['siswa.id_siswa' => $this->session->userdata('id_user')])->result()
         ];
         // print_r($data['konsultasi']);
         // die;

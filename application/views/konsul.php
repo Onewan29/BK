@@ -49,10 +49,7 @@
                                     <?php echo anchor('konsul/info_konsul/' . $sk->id_konsultasi, '<div class="btn btn-sm btn-outline-info "><i class="fa fa-info"></i></div> ');
                                     if ($this->session->userdata('level') == 'admin') {
                                     ?>
-
-                                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-konsul="<?= $sk->id_konsultasi ?>" data-target="#editmodal"><i class="fas fa-edit"></i>
-                                        </button>
-
+                                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-konsul="<?= $sk->id_konsultasi ?>" data-target="#editmodalkonsultasi"><i class="fas fa-edit"></i></button>
                                     <?php
                                         echo anchor('konsul/delete/' . $sk->id_konsultasi, '<div class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></div> ');
                                     } ?>
@@ -83,24 +80,18 @@
                 <div class="form-group">
                     <label>NIS</label>
                     <select required class="form-control " name="id_siswa">
-
                         <option value="">-- Pilih NIS </option>
                         <?php foreach ($siswa as $sw) : ?>
-
                             <option value="<?= $sw->id_siswa ?>"><?= $sw->id_siswa ?>-<?= $sw->nama_siswa ?></option>
                         <?php endforeach; ?>
                     </select>
-
-
                     <label>NIP</label>
                     <select required class="form-control form-control" name="id_guru">
                         <option value="">-- Pilih NIP </option>
                         <?php foreach ($guru as $gr) : ?>
                             <option value="<?= $gr->id_guru ?>"><?= $gr->id_guru ?>-<?= $gr->nama_guru ?></option>
                         <?php endforeach; ?>
-
                     </select>
-
                     <label>Kode Kelas</label>
                     <select name="id_KJ" id="id_KJ" class="form-control">
                         <?php
@@ -112,7 +103,6 @@
                         ?>
                     </select>
                     <!-- <input required type="text" name="id_KJ" id="id_KJ" class="form-control" onkeyup="isi_otomatis()"> -->
-
                     <label>Nama Kelas</label>
                     <input required type="text" class="form-control" name="kelas" id="Kelas" readonly>
                     </input>
@@ -148,7 +138,7 @@
 // foreach ($konsultasi as $sk) :
 //     $no++;
 ?>
-<div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editmodalkonsultasi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -158,61 +148,41 @@
                 </button>
             </div>
             <div class="modal-body">
-                <?php echo form_open_multipart('konsul/update_aksi/' . $sk->id_konsultasi); ?>
+                <?php echo form_open_multipart('konsul/update_aksi'); ?>
                 <div class="form-group">
-                    <label>NIS</label>
-                    <input required type="text" name="id_siswa" class="form-control" value="<?php echo $sk->id_siswa ?>">
-
-
+                    <input readonly type="text" id="id_konsul" name="id_konsul" class="form-control">
+                    <label>NIS</label>P
+                    <input required type="text" id="id_siswa" name="id_siswa" class="form-control">
                     <label>NIP</label>
-                    <input required type="text" name="id_guru" class="form-control" value="<?php echo $sk->id_guru ?>">
-
+                    <input required type="text" id="id_guru" name="id_guru" class="form-control">
                     <label>Kode Kelas</label>
-                    <!-- <input required type="text" name="id_KJ" id="id_KJ_update" class="form-control" onkeyup="isi_otomatis_update()" value="<?php echo $sw->id_KJ ?>"> -->
-                    <select name="id_KJ" id="id_KJ_update" class="form-control">
+                    <select name="id_KJ" id="id_kj_update" class="form-control">
                         <?php
-                        $selected = '';
                         foreach ($kelas as $valueKelas) {
-                            if ($valueKelas->Kelas == $sk->kelas && $valueKelas->nama_jurusan == $sk->nama_jurusan) {
-                                $selected = 'selected';
-                            }
                         ?>
-                            <option data-kelas="<?= $valueKelas->Kelas ?>" data-jurusan="<?= $valueKelas->nama_jurusan ?>" value="<?= $valueKelas->id_KJ ?>" <?= $selected ?>> <?= "$valueKelas->Kelas $valueKelas->nama_jurusan"  ?></option>
+                            <option data-kelas="<?= $valueKelas->Kelas ?>" data-jurusan="<?= $valueKelas->nama_jurusan ?>" value="<?= $valueKelas->id_KJ ?>"> <?= "$valueKelas->Kelas $valueKelas->nama_jurusan"  ?></option>
                         <?php }
                         ?>
                     </select>
-
                     <label>Nama Kelas</label>
-
-                    <input readonly name="kelas" id="Kelas_update" class="form-control" value="<?php echo $sk->kelas ?>">
-
-                    </input>
+                    <input readonly name="kelas" id="Kelas_update" class="form-control" readonly>
                     <label>Nama Jurusan</label>
-                    <input readonly name="nama_jurusan" id="nama_jurusan_update" class="form-control" value="<?php echo $sk->nama_jurusan ?>">
-
+                    <input readonly name="nama_jurusan" id="nama_jurusan_update" class="form-control" readonly>
                     </input>
 
                     <label>Semester</label>
-                    <select required class="form-control form-control" name="id_perekapan" value="<?php echo $sk->id_perekapan ?>">
+                    <select required class="form-control form-control" id="id_perekapan" name="id_perekapan">
                         <option value="">-- Pilih Semester </option>
                         <?php foreach ($perekapan as $pk) : ?>
                             <option value="<?= $pk->id_perekapan ?>"><?= $pk->thn_ajaran . ' ' . $pk->semester ?></option>
                         <?php endforeach ?>
                     </select>
-
-
-
                     <label>Tanggal</label>
-                    <input required type="date" name="tanggal" class="form-control" value="<?php echo $sk->tanggal ?>">
-
+                    <input required type="date" name="tanggal" class="form-control" id="tanggal">
                     <label>Catatan</label>
-                    <textarea class="form-control" name="catatan" id="exampleFormControlTextarea1" rows="3"><?php echo $sk->catatan ?>
-
-                            </textarea>
-
-
+                    <textarea class="form-control" name="catatan" id="catatan" rows="3"><?php echo $sk->catatan ?>
+                    </textarea>
                 </div>
-
             </div>
             <div class="modal-footer">
                 <button type="reset" class="btn btn-outline-danger">Batal</button>

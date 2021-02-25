@@ -141,7 +141,7 @@
         });
     })
 
-    $('#editmodal').on('show.bs.modal', function(event) {
+    $('#editmodalkonsultasi').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var konsul = button.data('konsul') // Extract info from data-* attributes
         var modal = $(this)
@@ -152,8 +152,43 @@
             },
             url: "<?= base_url('konsul/getDetail_update') ?>",
             success: function(data) {
-                // console.log(JSON.parse(data));
-                // modal.find('.modal-body #datapelanggaran').html(JSON.parse(data));
+                var datakonsultasi = JSON.parse(data);
+                modal.find('.modal-body #id_konsul').val(datakonsultasi.id_konsul);
+                modal.find('.modal-body #id_siswa').val(datakonsultasi.nis);
+                modal.find('.modal-body #id_guru').val(datakonsultasi.nip);
+                modal.find('.modal-body #id_kj_update').val(datakonsultasi.kodeKelas);
+                modal.find('.modal-body #Kelas_update').val(datakonsultasi.namaKelas);
+                modal.find('.modal-body #nama_jurusan_update').val(datakonsultasi.namaJurusan);
+                modal.find('.modal-body #id_perekapan').val(datakonsultasi.semester);
+                modal.find('.modal-body #tanggal').val(datakonsultasi.tanggal);
+                modal.find('.modal-body #catatan').val(datakonsultasi.catatan);
+            }
+        });
+    })
+
+    $('#editmodalpelanggaran').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var pelanggaran = button.data('pelanggaran') // Extract info from data-* attributes
+        var modal = $(this)
+        $.ajax({
+            type: "POST",
+            data: {
+                id_pelanggaran: pelanggaran
+            },
+            url: "<?= base_url('pelanggaran/getDetail_update') ?>",
+            success: function(data) {
+                var datapelanggaran = JSON.parse(data);
+                // console.log(datapelanggaran);
+                modal.find('.modal-body #id_pelanggaran').val(datapelanggaran.id_pelanggaran);
+                modal.find('.modal-body #id_siswa').val(datapelanggaran.nis);
+                modal.find('.modal-body #id_kj_update').val(datapelanggaran.kode_kelas);
+                modal.find('.modal-body #Kelas_update').val(datapelanggaran.kelas);
+                modal.find('.modal-body #nama_jurusan_update').val(datapelanggaran.jurusan);
+                modal.find('.modal-body #id_guru').val(datapelanggaran.nip);
+                modal.find('.modal-body #id_kp').val(datapelanggaran.kategori);
+                modal.find('.modal-body #id_perekapan').val(datapelanggaran.kodePerekapan);
+                modal.find('.modal-body #tanggal').val(datapelanggaran.tanggal);
+                modal.find('.modal-body #catatan').val(datapelanggaran.catatan);
             }
         });
     })

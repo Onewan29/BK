@@ -31,6 +31,8 @@ class pelanggaran extends CI_Controller
     $data['perekapan'] = $this->perekapan_model->tampil_data()->result();
     $data['pelanggaran'] = $this->pelanggaran_model->gabung()->result();
     $data['pr'] = $this->pelanggaran_model->getall()->result();
+    $data['kelas'] = $this->jurusan_model->tampil_data()->result();
+
     $this->load->view('template/header');
     $this->load->view('template/sidebar');
     $this->load->view('pelanggaran', $data);
@@ -185,6 +187,27 @@ class pelanggaran extends CI_Controller
     redirect('pelanggaran');
   }
 
+  public function getDetail_update()
+  {
+    $id_pelanggaran = $this->input->post('id_pelanggaran');
+    $pelanggaran = $this->pelanggaran_model->detailTampil(['id_pelanggaran' => $id_pelanggaran])->row();
+    if ($pelanggaran != null) {
+      $data['result'] = 'sukses';
+      $data['id_pelanggaran'] = $pelanggaran->id_pelanggaran;
+      $data['nis'] = $pelanggaran->id_siswa;
+      $data['kode_kelas'] = $pelanggaran->id_KJ;
+      $data['kelas'] = $pelanggaran->kelas;
+      $data['jurusan'] = $pelanggaran->nama_jurusan;
+      $data['nip'] = $pelanggaran->id_guru;
+      $data['kategori'] = $pelanggaran->id_kp;
+      $data['kodePerekapan'] = $pelanggaran->id_perekapan;
+      $data['tanggal'] = $pelanggaran->tanggal;
+      $data['catatan'] = $pelanggaran->catatan;
+    } else {
+      $data['result'] = 'gagal';
+    }
+    echo json_encode($data);
+  }
 
   public function delete($id)
   {

@@ -39,12 +39,10 @@ class konsul_model extends CI_Model
 
     public function cari_gabung($id)
     {
-        $this->db->order_by('id_konsultasi');
-        return $this->db->from('konsultasi')
-            ->join('siswa', 'siswa.id_siswa=konsultasi.id_siswa')
-            ->where('siswa.id_siswa', '$id')
-            ->get_()
-            ->row();
+        $this->db->from('konsultasi');
+        // $this->db->join('siswa', 'siswa.id_siswa=konsultasi.id_siswa');
+        $this->db->where('id_konsultasi', $id);
+        return $this->db->get()->row();
     }
 
     public function gabung_sk($id_konsultasi)
