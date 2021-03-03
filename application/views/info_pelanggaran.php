@@ -6,7 +6,7 @@
 
         <div class="card-header py-3">
             <a href="<?= base_url('pelanggaran'); ?>" class="btn btn-outline-primary"> <i class="fas fa-backward"></i> Kembali</a>
-            <a href="<?= base_url('pelanggaran/cetak_siswa'); ?>" target="_blank" class="btn btn-outline-warning"> <i class="fas fa-print"></i></a>
+            <a href="<?= base_url('pelanggaran/cetak_siswa'); ?>" class="btn btn-outline-warning"><i class="fas fa-print"></i> </a>
 
         </div>
 

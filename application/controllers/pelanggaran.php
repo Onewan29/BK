@@ -258,22 +258,17 @@ class pelanggaran extends CI_Controller
 
   public function cetak_siswa()
   {
-    $data = array(
-      "dataku" => array(
-        "nama" => "Petani Kode",
-        "url" => "http://petanikode.com"
-      )
-    );
+    $this->load->library('dompdf_gen');
+    $data['pelanggaran'] = $this->pelanggaran_model->tampil_data('pelanggaran')->result();
+
 
     $this->load->library('pdf');
+
     $this->pdf->setPaper('A4', 'potrait');
-    $this->pdf->filename = "laporan-petanikode.pdf";
-    $this->pdf->load_view('laporan_pdf', $data);
-    //atau jika tidak ingin menampilkan (tanpa) preview di halaman browser
-    //$this->dompdf->stream("welcome.pdf");
-
-
+    $this->pdf->filename = "laporan-pelanggaran.pdf";
+    $this->pdf->load_view('info_pelanggaran', $data);
   }
+
   public function detailPelanggaran()
   {
     $data =  [

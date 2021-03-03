@@ -141,4 +141,15 @@ class wali_kelas extends CI_Controller
       </div>');
         redirect('wali_kelas');
     }
+    public function WaliDetail()
+    {
+        $data =  [
+            'tabel_walikelas' => $this->wali_kelas_model->tampil_data(['tabel_walikelas.id_walikelas' => $this->session->userdata('id_user')])->result()
+        ];
+
+        $this->load->view('template/header');
+        $this->load->view('template/sidebar');
+        $this->load->view('wali_kelas', $data);
+        $this->load->view('template/footer');
+    }
 }

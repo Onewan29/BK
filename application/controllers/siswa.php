@@ -299,4 +299,17 @@ class siswa extends CI_Controller
     $this->load->view('siswa_info', $data);
     $this->load->view('template/footer');
   }
+
+  public function print()
+  {
+
+    $this->load->library('dompdf_gen');
+    $data['siswa'] = $this->siswa_model->tampil_data()->result();
+
+    $this->load->library('pdf');
+
+    $this->pdf->setPaper('A4', 'potrait');
+    $this->pdf->filename = "siswa.pdf";
+    $this->pdf->load_view('info_siswa', $data);
+  }
 }

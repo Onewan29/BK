@@ -6,7 +6,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <a href="<?= base_url('siswa'); ?>" class="btn btn-outline-primary"><i class="fas fa-backward"></i> Kembali</a>
-            <a href="<?= base_url('cetak_siswa'); ?>" class="btn btn-outline-warning"><i class="fas fa-print"></i> </a>
+            <a href="<?= base_url('siswa/print'); ?>" class="btn btn-outline-warning"><i class="fas fa-print"></i> </a>
         </div>
         <div class="card-header py-3">
 
@@ -22,14 +22,14 @@
                             <th>Nama Siswa</th>
                             <td><?php echo $sw->nama_siswa ?></td>
                         </tr>
-                        <?php if ($this->session->userdata('level') == 'siswa' || $this->session->userdata('level') == 'ortu') { ?>
 
-                            <tr>
-                                <th>Password</th>
-                                <td><?php echo $sw->password ?></td>
-                            </tr>
 
-                        <?php } ?>
+                        <tr>
+                            <th>Password</th>
+                            <td><?php echo $sw->password ?></td>
+                        </tr>
+
+
                         <tr>
                             <th>Jurusan</th>
                             <td><?php echo $sw->nama_jurusan ?></td>
@@ -82,14 +82,12 @@
                             <th>Nama Ayah</th>
                             <td><?php echo $sw->nama_ayah ?></td>
                         </tr>
-                        <?php if ($this->session->userdata('level') == 'siswa' || $this->session->userdata('level') == 'ortu') { ?>
 
+                        <tr>
+                            <th>Password Orangtua</th>
+                            <td><?php echo $sw->password_ortu ?></td>
+                        </tr>
 
-                            <tr>
-                                <th>Password Orangtua</th>
-                                <td><?php echo $sw->password_ortu ?></td>
-                            </tr>
-                        <?php } ?>
                         <tr>
                             <th>Nama Ibu</th>
                             <td><?php echo $sw->nama_ibu ?></td>
