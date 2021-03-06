@@ -13,12 +13,7 @@ class konsul extends CI_Controller
         $this->load->model("siswa_model");
         $this->load->model("guru_model");
         $this->load->model("jurusan_model");
-        // iki script wajib gae membatasi akses lewat jalur url 
-        // siswa seng pinter iso iseng dan bakal jebol lek nggak mbok kek i iki
-        // if ($this->session->userdata('level') == 'ortu' || $this->session->userdata('level') == 'siswa') {
-        //     $this->session->sess_destroy();
-        //     redirect('Auth');
-        // }
+        $this->load->model("Histori_kelas_model");
     }
 
 
@@ -28,12 +23,17 @@ class konsul extends CI_Controller
         $data['kelas'] = $this->jurusan_model->tampil_data()->result();
         $data['guru'] = $this->guru_model->tampil_data()->result();
         $data['perekapan'] = $this->Konsul_model->panggil_perekapan();
-        $data['konsultasi'] = $this->Konsul_model->gabung();
+        if ($this->session->userdata('level') == 'wali kelas') {
+            $data['konsultasi'] = $this->Histori_kelas_model->lihat_konsultasi($this->session->userdata('kelas'), $this->session->userdata('tahun_ajar'));
+        } else {
+            $data['konsultasi'] = $this->Konsul_model->gabung();
+        }
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
         $this->load->view('konsul', $data);
         $this->load->view('template/footer');
     }
+
     public function input()
     {
         $data = array(
@@ -68,7 +68,6 @@ class konsul extends CI_Controller
         $catatan             = $this->input->post('catatan');
         $id_perekapan             = $this->input->post('id_perekapan');
 
-
         $this->_rules();
 
         if ($this->form_validation->run() == FALSE) {
@@ -82,8 +81,6 @@ class konsul extends CI_Controller
                 'tanggal' => $tanggal,
                 'catatan'            => $catatan,
                 'id_perekapan'            => $id_perekapan,
-
-
             );
             $this->Konsul_model->input_data($data);
             $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -142,7 +139,6 @@ class konsul extends CI_Controller
         $tanggal = $this->input->post('tanggal');
         $catatan = $this->input->post('catatan');
         $id_perekapan = $this->input->post('id_perekapan');
-
         $data = array(
             'id_siswa'    => $id_siswa,
             'id_guru'     => $id_guru,
@@ -225,7 +221,6 @@ class konsul extends CI_Controller
         } else {
             $data = null;
         }
-
         echo json_encode($data);
     }
 

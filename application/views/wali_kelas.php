@@ -22,12 +22,10 @@
                             <th>NIP</th>
                             <th>Kode Jurusan</th>
                             <th>Nama Guru</th>
-
                             <?php if ($this->session->userdata('level') == 'admin') { ?>
                                 <th>Password</th>
                                 <th width="11%">Aksi</th>
                             <?php } ?>
-
                     </thead>
                     <tbody>
                         <?php
@@ -38,20 +36,16 @@
                                 <td><?php echo $tws->nip ?></td>
                                 <td><?php echo $tws->id_KJ ?></td>
                                 <td><?php echo $tws->nama_walikelas ?></td>
-
                                 <?php if ($this->session->userdata('level') == 'admin') { ?>
                                     <td><?php echo $tws->password ?></td>
                                     <td>
-
                                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#editmodal<?php echo $tws->id_walikelas ?>"><i class="fas fa-edit"></i>
                                         </button>
-
                                         <?php echo anchor('wali_kelas/delete/' . $tws->id_walikelas, '<div class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></div> '); ?>
                                     </td>
                                 <?php } ?>
                             </tr>
                         <?php endforeach; ?>
-
                     </tbody>
                 </table>
             </div>
@@ -88,7 +82,13 @@
                     <input required type="password" name="password" class="form-control" id="show">
                     <input type="checkbox" class="form-checkbox"> Show Password
                     <br>
-
+                    <label>Tahun Ajaran</label>
+                    <select id="tahun_ajaran" required class="form-control form-control" name="tahun_ajaran">
+                        <option value="">-- Pilih Tahun Masuk </option>
+                        <?php foreach ($perekapan as $pk) : ?>
+                            <option value="<?= $pk->id_perekapan ?>"><?= $pk->thn_ajaran . ' ' . $pk->semester ?></option>
+                        <?php endforeach ?>
+                    </select>
                 </div>
 
             </div>
@@ -126,6 +126,13 @@ foreach ($tabel_walikelas as $tws) : $no++; ?>
                         <input required type="password" name="password" class="form-control" id="show_update" value="<?php echo $tws->password ?>">
                         <input type="checkbox" class="form-checkbox"> Show Password
                         <br>
+                        <label>Tahun Ajaran</label>
+                        <select id="tahun_ajaran" required class="form-control form-control" name="tahun_ajaran">
+                            <option value="">-- Pilih Tahun Masuk </option>
+                            <?php foreach ($perekapan as $pk) : ?>
+                                <option value="<?= $pk->id_perekapan ?>"><?= $pk->thn_ajaran . ' ' . $pk->semester ?></option>
+                            <?php endforeach ?>
+                        </select>
                     </div>
 
                 </div>

@@ -141,6 +141,48 @@
         });
     })
 
+    $('#kelas_modal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var nis = button.data('siswa') // Extract info from data-* attributes
+        var modal = $(this)
+        $.ajax({
+            type: "POST",
+            data: {
+                nis: nis,
+            },
+            url: "<?= base_url('siswa/getKelas') ?>",
+            success: function(res) {
+                var data = JSON.parse(res);
+                modal.find('.modal-body #tabel_histori').html(data.html);
+                modal.find('.modal-body #nis_kelas').val(nis);
+                modal.find('.modal-body #btn_kelulusan').removeClass();
+                modal.find('.modal-body #tahun_lulus').removeAttr('disabled');
+                modal.find('.modal-body #btn_kelulusan').addClass('btn mt-2 btn-primary');
+                modal.find('.modal-body #btn_kelulusan').text('Lulus');
+                if (data.tahun_lulus != '') {
+                    modal.find('.modal-body #tahun_lulus').val(data.tahun_lulus);
+                    modal.find('.modal-body #tahun_lulus').attr('disabled', 'true');
+                    modal.find('.modal-body #btn_kelulusan').addClass('btn mt-2 btn-danger');
+                    modal.find('.modal-body #btn_kelulusan').text('Hapus');
+                }
+            }
+        });
+    });
+
+    // function btn_edit_kelas(id, kelas, tahun_ajar) {
+    //     $('#id_histori').val(id);
+    //     $('#id_KJ').val(kelas);
+    //     $('#tahun_ajaran').val(tahun_ajar);
+    // }
+
+    $('#tabel_histori').on('click', 'button.btn_edit_kelas', function(params) {
+        $('#id_histori').val($(this).data('idhistori'));
+        $('#id_kelas').val($(this).data('kelas'));
+        $('#tahun_ajaran').val($(this).data('tahunajar'));
+        $('#btn_simpan_kelas').text('update');
+    });
+
+    // edit modal konsultasi
     $('#editmodalkonsultasi').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var konsul = button.data('konsul') // Extract info from data-* attributes
@@ -153,6 +195,7 @@
             url: "<?= base_url('konsul/getDetail_update') ?>",
             success: function(data) {
                 var datakonsultasi = JSON.parse(data);
+                set_option_kelas(datakonsultasi.nis, '#editmodalkonsultasi #id_kj_update', datakonsultasi.kodeKelas);
                 modal.find('.modal-body #id_konsul').val(datakonsultasi.id_konsul);
                 modal.find('.modal-body #id_siswa').val(datakonsultasi.nis);
                 modal.find('.modal-body #id_guru').val(datakonsultasi.nip);
@@ -169,27 +212,47 @@
     $('#editmodalpelanggaran').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var pelanggaran = button.data('pelanggaran') // Extract info from data-* attributes
-        var modal = $(this)
+        var modal = $(this);
         $.ajax({
             type: "POST",
             data: {
                 id_pelanggaran: pelanggaran
             },
+            dataType: "JSON",
             url: "<?= base_url('pelanggaran/getDetail_update') ?>",
             success: function(data) {
-                var datapelanggaran = JSON.parse(data);
-                // console.log(datapelanggaran);
-                modal.find('.modal-body #id_pelanggaran').val(datapelanggaran.id_pelanggaran);
-                modal.find('.modal-body #id_siswa').val(datapelanggaran.nis);
-                modal.find('.modal-body #id_kj_update').val(datapelanggaran.kode_kelas);
-                modal.find('.modal-body #Kelas_update').val(datapelanggaran.kelas);
-                modal.find('.modal-body #nama_jurusan_update').val(datapelanggaran.jurusan);
-                modal.find('.modal-body #id_guru').val(datapelanggaran.nip);
-                modal.find('.modal-body #id_kp').val(datapelanggaran.kategori);
-                modal.find('.modal-body #id_perekapan').val(datapelanggaran.kodePerekapan);
-                modal.find('.modal-body #tanggal').val(datapelanggaran.tanggal);
-                modal.find('.modal-body #catatan').val(datapelanggaran.catatan);
+                modal.find('.modal-body #id_siswa').val(data.nis);
+                set_option_kelas(data.nis, '#editmodalpelanggaran #id_kj_update', data.kode_kelas);
+                modal.find('.modal-body #id_pelanggaran').val(data.id_pelanggaran);
+                // modal.find('.modal-body #id_kj_update').val(data.kode_kelas);
+                modal.find('.modal-body #Kelas_update').val(data.kelas);
+                modal.find('.modal-body #nama_jurusan_update').val(data.jurusan);
+                modal.find('.modal-body #id_guru').val(data.nip);
+                modal.find('.modal-body #id_kp').val(data.kategori);
+                modal.find('.modal-body #id_perekapan').val(data.kodePerekapan);
+                modal.find('.modal-body #tanggal').val(data.tanggal);
+                modal.find('.modal-body #catatan').val(data.catatan);
+            }
+        })
+    });
+
+    $('#exampleModal #nis_siswa').change(function() {
+        let nis = $("#exampleModal #nis_siswa option:selected").val();
+        set_option_kelas(nis, '#exampleModal #id_KJ', null);
+    });
+
+    function set_option_kelas(nis, option, id_kelas) {
+        $.ajax({
+            method: "POST",
+            url: "<?= base_url('histori_kelas/opt_HistoriKelas') ?>",
+            data: {
+                nis: nis,
+                id_kelas: id_kelas
+            },
+            dataType: "JSON",
+            success: function(e) {
+                $(option).html(e);
             }
         });
-    })
+    }
 </script>

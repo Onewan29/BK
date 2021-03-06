@@ -6,23 +6,17 @@
         <img class="image" border="0" src="<?php echo base_url('assets/img/kop.png') ?>" width="100%">
     </div>
 
-
-
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <?php if ($this->session->userdata('level') == 'admin') { ?>
-
-
                 <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i>
                     Tambah Data
                 </button>
             <?php } ?>
             <h6 class="m-0 font-weight-bold text-primary">Data Konsultasi | <a href="<?= base_url('dashboard'); ?>"><i class="fa fa-home"></i> Home</a> </h6>
-
         </div>
         <div class="card-body">
             <div class="table-responsive">
-
                 <table class="table table-bordered" id="myTable" cellspacing="0">
                     <thead>
                         <tr>
@@ -79,12 +73,17 @@
                 <?php echo form_open_multipart('konsul/input_aksi'); ?>
                 <div class="form-group">
                     <label>NIS</label>
-                    <select required class="form-control " name="id_siswa">
+                    <select required class="form-control" id="nis_siswa" name="id_siswa">
                         <option value="">-- Pilih NIS </option>
                         <?php foreach ($siswa as $sw) : ?>
                             <option value="<?= $sw->id_siswa ?>"><?= $sw->id_siswa ?>-<?= $sw->nama_siswa ?></option>
                         <?php endforeach; ?>
                     </select>
+
+                    <label>Kode Kelas</label>
+                    <select name="id_KJ" id="id_KJ" class="form-control">
+                    </select>
+
                     <label>NIP</label>
                     <select required class="form-control form-control" name="id_guru">
                         <option value="">-- Pilih NIP </option>
@@ -92,16 +91,7 @@
                             <option value="<?= $gr->id_guru ?>"><?= $gr->id_guru ?>-<?= $gr->nama_guru ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <label>Kode Kelas</label>
-                    <select name="id_KJ" id="id_KJ" class="form-control">
-                        <?php
-                        foreach ($kelas as $valueKelas) {
-                        ?>
-                            <option data-kelas="<?= $valueKelas->Kelas ?>" data-jurusan="<?= $valueKelas->nama_jurusan ?>" value="<?= $valueKelas->id_KJ ?>"> <?= "$valueKelas->Kelas $valueKelas->nama_jurusan" ?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
+
                     <!-- <input required type="text" name="id_KJ" id="id_KJ" class="form-control" onkeyup="isi_otomatis()"> -->
                     <label>Nama Kelas</label>
                     <input required type="text" class="form-control" name="kelas" id="Kelas" readonly>
@@ -133,11 +123,6 @@
     </div>
 </div>
 
-<?php
-// $no = 0;
-// foreach ($konsultasi as $sk) :
-//     $no++;
-?>
 <div class="modal fade" id="editmodalkonsultasi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -193,6 +178,3 @@
         </div>
     </div>
 </div>
-<?php
-// endforeach;
-?>

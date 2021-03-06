@@ -1,6 +1,5 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
-
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <img class="image" border="0" src="<?php echo base_url('assets/img/kop.png') ?>" width="100%">
@@ -8,8 +7,6 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <?php if ($this->session->userdata('level') == 'admin') { ?>
-
-
                 <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i>
                     Tambah Data
                 </button>
@@ -44,12 +41,11 @@
                                 <td>
                                     <?php echo anchor('siswa/info_siswa/' . $sw->id_siswa, '<div class="btn btn-sm btn-outline-info "><i class="fa fa-info"></i></div> ');
                                     if ($this->session->userdata('level') == 'admin') {
-                                        # code...
                                     ?>
-
                                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#editmodal<?php echo $sw->id_siswa ?>"><i class="fas fa-edit"></i>
                                         </button>
-
+                                        <button type="button" data-siswa="<?= $sw->id_siswa; ?>" class="btn btn-outline-primary" data-toggle="modal" data-target="#kelas_modal"><i class="fas fa-book"></i>
+                                        </button>
                                     <?php echo anchor('siswa/delete/' . $sw->id_siswa, '<div class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></div> ');
                                     } ?>
                                 </td>
@@ -106,15 +102,30 @@
                                         <option>Perempuan</option>
                                     </select>
 
-                                    <label>Kode Kelas</label>
+                                    <label>Tahun Masuk</label>
+                                    <select required class="form-control form-control" name="thn_masuk">
+                                        <option value="">-- Pilih Tahun Masuk </option>
+                                        <?php foreach ($perekapan as $pk) : ?>
+                                            <option value="<?= $pk->id_perekapan ?>"><?= $pk->thn_ajaran . ' ' . $pk->semester ?></option>
+                                        <?php endforeach ?>
+                                    </select>
 
-                                    <input required type="text" name="id_KJ" id="id_KJ" class="form-control" onkeyup="isi_otomatis()">
+                                    <label>Kode Kelas</label>
+                                    <select name="id_KJ" id="id_KJ" class="form-control">
+                                        <option value="">-- Pilih Kelas </option>
+                                        <?php
+                                        foreach ($kelas as $valueKelas) {
+                                        ?>
+                                            <option data-kelas="<?= $valueKelas->Kelas ?>" data-jurusan="<?= $valueKelas->nama_jurusan ?>" value="<?= $valueKelas->id_KJ ?>"> <?= "$valueKelas->Kelas $valueKelas->nama_jurusan"  ?></option>
+                                        <?php }
+                                        ?>
+                                    </select>
 
                                     <label>Nama Kelas</label>
-                                    <input required type="text" name="kelas" id="Kelas" class="form-control">
+                                    <input required readonly type="text" name="kelas" id="Kelas" class="form-control">
 
                                     <label>Nama Jurusan</label>
-                                    <input required type="text" name="nama_jurusan" id="nama_jurusan" class="form-control">
+                                    <input required readonly type="text" name="nama_jurusan" id="nama_jurusan" class="form-control">
 
                                     <label>Nilai Rata-Rata Raport</label>
                                     <input type="text" name="nilai_raport" class="form-control">
@@ -211,6 +222,87 @@
     </div>
 </div>
 
+<div class="modal fade" id="kelas_modal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Form Input Data Kelas</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php echo form_open_multipart('histori_kelas/input_aksi'); ?>
+                <div class="card shadow mb-4">
+                    <a href="#form_kelas" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="form_kelas">
+                        <h6 class="m-0 font-weight-bold text-primary">Form Kelas</h6>
+                    </a>
+                    <div class="collapse show" id="form_kelas">
+                        <div class="card-body">
+                            <input readonly type="hidden" name="nis" id="nis_kelas">
+                            <input readonly type="hidden" name="id_histori" value="" id="id_histori">
+                            <label>Tahun Ajaran</label>
+                            <select id="tahun_ajaran" required class="form-control form-control" name="tahun_ajaran">
+                                <option value="">-- Pilih Tahun Masuk </option>
+                                <?php foreach ($perekapan as $pk) : ?>
+                                    <option value="<?= $pk->id_perekapan ?>"><?= $pk->thn_ajaran . ' ' . $pk->semester ?></option>
+                                <?php endforeach ?>
+                            </select>
+                            <label>Kelas</label>
+                            <select name="id_KJ" id="id_kelas" class="form-control">
+                                <option value="">-- Pilih Kelas </option>
+                                <?php
+                                foreach ($kelas as $valueKelas) {
+                                ?>
+                                    <option data-kelas="<?= $valueKelas->Kelas ?>" data-jurusan="<?= $valueKelas->nama_jurusan ?>" value="<?= $valueKelas->id_KJ ?>"> <?= "$valueKelas->Kelas $valueKelas->nama_jurusan"  ?></option>
+                                <?php }
+                                ?>
+                            </select>
+                            <button id="btn_simpan_kelas" type="submit" class="btn btn-primary mt-2">simpan</button>
+                        </div>
+                    </div>
+                </div>
+                <?php echo form_close() ?>
+
+                <div class="card shadow mb-4">
+                    <a href="#tbl_histori_kelas" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="tbl_histori_kelas">
+                        <h6 class="m-0 font-weight-bold text-primary">Histori Kelas</h6>
+                    </a>
+                    <div class="collapse show" id="tbl_histori_kelas">
+                        <div class="card-body">
+                            <div id="tabel_histori"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php echo form_open_multipart('siswa/input_kelulusan'); ?>
+                <div class="card shadow mb-4">
+                    <a href="#form_kelulusan" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="form_kelulusan">
+                        <h6 class="m-0 font-weight-bold text-primary">Form Kelulusan</h6>
+                    </a>
+                    <div class="collapse show" id="form_kelulusan">
+                        <div class="card-body">
+                            <input type="hidden" name="nis" id="nis_kelas">
+                            <label>Tahun Ajaran</label>
+                            <select required class="form-control form-control" id="tahun_lulus" name="tahun_lulus">
+                                <option value="">-- Pilih Tahun Masuk </option>
+                                <?php foreach ($perekapan as $pk) : ?>
+                                    <option value="<?= $pk->id_perekapan ?>"><?= $pk->thn_ajaran . ' ' . $pk->semester ?></option>
+                                <?php endforeach ?>
+                            </select>
+                            <button id="btn_kelulusan" type="submit" class="">Lulus</button>
+                        </div>
+                    </div>
+                </div>
+                <?php echo form_close() ?>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-outline-danger">Batal</button>
+                    <button type="submit" class="btn btn-outline-success">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 $no = 0;
@@ -362,6 +454,3 @@ foreach ($siswa as $sw) { ?>
 <?php
     $no++;
 } ?>
-
-
-<?php $no = 0; ?>

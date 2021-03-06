@@ -1,6 +1,5 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
-
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <img class="image" border="0" src="<?php echo base_url('assets/img/kop.png') ?>" width="100%">
@@ -8,8 +7,6 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <?php if ($this->session->userdata('level') == 'admin') { ?>
-
-
                 <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i>
                     Tambah Data
                 </button>
@@ -18,20 +15,16 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-
                 <table class="table table-bordered" id="myTable" cellspacing="0">
                     <thead>
                         <tr>
                             <th>No</th>
-
                             <th>NIS</th>
                             <th>Nama Siswa</th>
                             <th>Nama Guru</th>
                             <th>Bentuk Pelanggaran</th>
                             <th>Bobot</th>
                             <th>Catatan</th>
-
-
                             <th width="11%">Aksi</th>
                     </thead>
                     <tbody>
@@ -40,7 +33,6 @@
                         foreach ($pelanggaran as $pn) : ?>
                             <tr>
                                 <td><?php echo $no++; ?></td>
-
                                 <td><?php echo $pn->id_siswa ?></td>
                                 <td><?php echo $pn->nama_siswa ?></td>
                                 <td><?php echo $pn->nama_guru ?></td>
@@ -52,15 +44,12 @@
                                     if ($this->session->userdata('level') == 'admin') {
                                     ?>
                                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-pelanggaran="<?= $pn->id_pelanggaran ?>" data-target="#editmodalpelanggaran"><i class="fas fa-edit"></i></button>
-
                                         <!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#editmodal<?php echo $pn->id_pelanggaran ?>"><i class="fas fa-edit"></i></button> -->
-
                                     <?php echo anchor('pelanggaran/delete/' . $pn->id_pelanggaran, '<div class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></div> ');
                                     } ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-
                     </tbody>
                 </table>
             </div>
@@ -84,7 +73,7 @@
                 <div class="form-group">
 
                     <label>NIS</label>
-                    <select required name="id_siswa" class="form-control">
+                    <select required name="id_siswa" id="nis_siswa" class="form-control">
                         <option value="">-- Pilih NIS </option>
                         <?php foreach ($siswa as $sw) : ?>
                             <option value="<?= $sw->id_siswa; ?>"><?= $sw->id_siswa; ?>-<?= $sw->nama_siswa; ?></option>
@@ -147,10 +136,6 @@
     </div>
 </div>
 
-<?php
-// $no = 0;
-// foreach ($pelanggaran as $pn) : $no++; 
-?>
 <div class="modal fade" id="editmodalpelanggaran" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -172,12 +157,7 @@
                     </select>
                     <label>Kode Kelas</label>
                     <select name="id_KJ" id="id_kj_update" class="form-control">
-                        <?php
-                        foreach ($kelas as $valueKelas) {
-                        ?>
-                            <option data-kelas="<?= $valueKelas->Kelas ?>" data-jurusan="<?= $valueKelas->nama_jurusan ?>" value="<?= $valueKelas->id_KJ ?>"> <?= "$valueKelas->Kelas $valueKelas->nama_jurusan"  ?></option>
-                        <?php }
-                        ?>
+                        <option value="pilih Kelas"></option>
                     </select>
                     <!-- <input required type="text" name="id_KJ" id="id_KJ_update" class="form-control" onkeyup="isi_otomatis_update()" value="<?= $pn->id_KJ ?>"> -->
                     <label>Kelas</label>
@@ -219,6 +199,3 @@
         </div>
     </div>
 </div>
-<?php
-// endforeach; 
-?>

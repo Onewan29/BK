@@ -8,18 +8,63 @@ class siswa extends CI_Controller
     $this->load->library('form_validation');
     $this->load->model("siswa_model");
     $this->load->model("jurusan_model");
+    $this->load->model("Konsul_model");
+    $this->load->model("Histori_kelas_model");
   }
-
 
   public function index()
   {
-
-    $data['siswa'] = $this->siswa_model->gabung();
+    $data['perekapan'] = $this->Konsul_model->panggil_perekapan();
+    $data['kelas'] = $this->jurusan_model->tampil_data()->result();
+    if ($this->session->userdata('level') == 'wali kelas') {
+      $data['siswa'] = $this->Histori_kelas_model->lihat_siswa($this->session->userdata('kelas'), $this->session->userdata('tahun_ajar'));
+    } else {
+      $data['siswa'] = $this->siswa_model->gabung();
+    }
     $this->load->view('template/header');
     $this->load->view('template/sidebar');
     $this->load->view('siswa', $data);
     $this->load->view('template/footer');
   }
+
+  public function getKelas()
+  {
+    $nis = $this->input->post('nis');
+    $detailSiswa = $this->siswa_model->tampil_data(['id_siswa' => $nis])->row();
+    $historiKelas = $this->Histori_kelas_model->tampil_data(['id_siswa' => $nis])->result();
+    $html = "<Table class='table table-bordered'>";
+    $html .= "<tr>";
+    $html .= "<th>Kelas</th>";
+    $html .= "<th>Tahun Ajaran/Sem.</th>";
+    $html .= "<th>Action</th>";
+    $html .= "</tr>";
+    if ($historiKelas != null) {
+      foreach ($historiKelas as $value) {
+        $html .= "<tr>";
+        $html .= "<td> $value->Kelas $value->nama_jurusan </td>";
+        $html .= "<td> $value->thn_ajaran /$value->semester </td>";
+        $html .= "<td><a href='" . base_url('siswa/hapus_histori_kelas/' . $value->id_histori) . "' class='btn btn-sm btn-outline-danger'><i class='fa fa-trash'></i></a> <button data-idhistori='$value->id_histori' data-kelas='$value->id_kj' data-tahunajar='$value->id_tahun_ajar' class='btn_edit_kelas btn btn-sm btn-outline-primary'><i class='fas fa-edit'></i></button></td>";
+        $html .= "</tr>";
+      }
+    } else {
+      $html .= "<tr>";
+      $html .= "<td colspan='3'> Data Tidak Ada </td>";
+      $html .= "</tr>";
+    }
+    $html .= "</Table>";
+    $data = [
+      'html' => $html,
+      'tahun_lulus' => $detailSiswa->tahun_lulus
+    ];
+    echo json_encode($data);
+  }
+
+  public function hapus_histori_kelas($id_histori)
+  {
+    $this->Histori_kelas_model->hapus_data(['id_histori' => $id_histori]);
+    redirect('siswa');
+  }
+
   public function input()
   {
 
@@ -48,9 +93,6 @@ class siswa extends CI_Controller
       'pekerjaan_ibu'    => set_value('pekerjaan_ibu'),
       'pendidikan_ibu'    => set_value('pendidikan_ibu'),
       'nohp_ibu'    => set_value('nohp_ibu'),
-
-
-
     );
     $data['kd'] = $this->jurusan_model->tampil_data()->result();
     $this->load->view('template/header');
@@ -58,6 +100,7 @@ class siswa extends CI_Controller
     $this->load->view('siswa_form', $data);
     $this->load->view('template/footer');
   }
+
   public function input_aksi()
   {
     $id_siswa     = $this->input->post('id_siswa');
@@ -65,6 +108,7 @@ class siswa extends CI_Controller
     $password   = $this->input->post('password');
     $jenis_kelamin   = $this->input->post('jenis_kelamin');
     $id_KJ      = $this->input->post('id_KJ');
+    $tahun_masuk      = $this->input->post('thn_masuk');
     $nilai_raport      = $this->input->post('nilai_raport');
     $alamat    = $this->input->post('alamat');
     $nohp   = $this->input->post('nohp');
@@ -94,6 +138,7 @@ class siswa extends CI_Controller
         'password'    => $password,
         'jenis_kelamin'    => $jenis_kelamin,
         'id_KJ'       => $id_KJ,
+        'tahun_masuk' => $tahun_masuk,
         'nilai_raport'       => $nilai_raport,
         'alamat'     => $alamat,
         'nohp'    => $nohp,
@@ -113,9 +158,16 @@ class siswa extends CI_Controller
         'pekerjaan_ibu'       => $pekerjaan_ibu,
         'pendidikan_ibu'     => $pendidikan_ibu,
         'nohp_ibu'    => $nohp_ibu
-
       );
       $this->siswa_model->input_data($data);
+      // insert data histori kelas
+      $dataHistoriKelas = [
+        'id_siswa' => $id_siswa,
+        'id_kj' => $id_KJ,
+        'id_tahun_ajar' => $tahun_masuk,
+      ];
+      $this->Histori_kelas_model->input_data($dataHistoriKelas);
+
       $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
             Data berhasil di tambahkan!
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -133,6 +185,7 @@ class siswa extends CI_Controller
       redirect('siswa');
     }
   }
+
   public function _rules()
   {
 
@@ -161,6 +214,8 @@ class siswa extends CI_Controller
     $this->form_validation->set_rules('pendidikan_ibu', 'pendidikan_ibu', 'xss_clean|is_unique[siswa.pendidikan_ibu]');
     $this->form_validation->set_rules('nohp_ibu', 'nohp_ibu', 'xss_clean|is_unique[siswa.nohp_ibu]');
   }
+
+
   public function update($id)
   {
     $where = array('id_siswa' => $id);
@@ -174,6 +229,8 @@ class siswa extends CI_Controller
     $this->load->view('siswa_update', $data);
     $this->load->view('template/footer');
   }
+
+
   public function update_aksi()
   {
     $id = $this->input->post('id_siswa');
@@ -255,6 +312,7 @@ class siswa extends CI_Controller
   {
 
     $data['siswa'] = $this->siswa_model->gabung2($id_siswa);
+    $data['histori_kelas'] = $this->Histori_kelas_model->tampil_data(['histori_kelas.id_siswa' => $id_siswa])->result();
     $this->load->view('template/header');
     $this->load->view('template/sidebar');
     $this->load->view('info_siswa', $data);
@@ -292,8 +350,6 @@ class siswa extends CI_Controller
     $data =  [
       'siswa' => $this->siswa_model->tampil_data(['siswa.id_siswa' => $this->session->userdata('id_user')])->result()
     ];
-    // print_r($data['konsultasi']);
-    // die;
     $this->load->view('template/header');
     $this->load->view('template/sidebar');
     $this->load->view('siswa_info', $data);
@@ -311,5 +367,17 @@ class siswa extends CI_Controller
     $this->pdf->setPaper('A4', 'potrait');
     $this->pdf->filename = "siswa.pdf";
     $this->pdf->load_view('info_siswa', $data);
+  }
+  public function input_kelulusan()
+  {
+    $nis = $this->input->post('nis');
+    $dataSiswa = $this->siswa_model->tampil_data(['id_siswa' => $nis])->row();
+    if ($dataSiswa->tahun_lulus == '') {
+      $tahun_lulus = $this->input->post('tahun_lulus');
+      $this->siswa_model->update_data(['id_siswa' => $nis], ['tahun_lulus' => $tahun_lulus], 'siswa');
+    } else {
+      $this->siswa_model->update_data(['id_siswa' => $nis], ['tahun_lulus' => null], 'siswa');
+    }
+    redirect('siswa');
   }
 }

@@ -124,6 +124,28 @@
                 </tbody>
 
             </table>
+
+            <table class="table table-bordered table-striped table-hover">
+                <tbody>
+                    <tr>
+                        <td>Kelas</td>
+                        <td>Tahun Ajaran</td>
+                    </tr>
+                    <?php
+                    if (empty($histori_kelas)) {
+                        echo "<td colspan='2'>Tidak ada Data Kelas</td>";
+                    } else {
+                        foreach ($histori_kelas as $valueHistori) : ?>
+                            <tr>
+                                <td><?= $valueHistori->Kelas . " " . $valueHistori->nama_jurusan ?></td>
+                                <td><?= $valueHistori->thn_ajaran . " " . $valueHistori->semester ?></td>
+                            </tr>
+                    <?php
+                        endforeach;
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -16,6 +16,7 @@ class pelanggaran extends CI_Controller
     $this->load->model("jurusan_model");
     $this->load->model("perekapan_model");
     $this->load->model("sanksi_model");
+    $this->load->model("Histori_kelas_model");
     // if ($this->session->userdata('level') == 'ortu' || $this->session->userdata('level') == 'siswa') {
     // $this->session->sess_destroy();
     //redirect('Auth');
@@ -29,7 +30,13 @@ class pelanggaran extends CI_Controller
     $data['guru'] = $this->guru_model->tampil_data()->result();
     $data['kategori'] = $this->kategori_model->tampil_data()->result();
     $data['perekapan'] = $this->perekapan_model->tampil_data()->result();
-    $data['pelanggaran'] = $this->pelanggaran_model->gabung()->result();
+    if ($this->session->userdata('level') == 'wali kelas') {
+      $data['pelanggaran'] = $this->Histori_kelas_model->lihat_pelanggaran($this->session->userdata('kelas'), $this->session->userdata('tahun_ajar'));
+    } else {
+      $data['pelanggaran'] = $this->pelanggaran_model->gabung()->result();
+    }
+
+
     $data['pr'] = $this->pelanggaran_model->getall()->result();
     $data['kelas'] = $this->jurusan_model->tampil_data()->result();
 

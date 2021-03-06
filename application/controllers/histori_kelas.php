@@ -1,0 +1,137 @@
+<?php
+class histori_kelas extends CI_Controller
+{
+
+  function __construct()
+  {
+    parent::__construct();
+    $this->load->library('form_validation');
+    $this->load->model("Histori_kelas_model");
+  }
+
+  public function index()
+  {
+    $data['guru'] = $this->guru_model->tampil_data()->result();
+    $this->load->view('template/header');
+    $this->load->view('template/sidebar');
+    $this->load->view('guru', $data);
+    $this->load->view('template/footer');
+  }
+
+  public function input()
+  {
+    $data = array(
+      'id_guru'      => set_value('id_guru'),
+      'nama_guru'    => set_value('nama_guru'),
+      'alamat'       => set_value('alamat'),
+      'golongan'     => set_value('golongan'),
+      'spesialis'    => set_value('spesialis'),
+
+    );
+    $this->load->view('template/header');
+    $this->load->view('template/sidebar');
+    $this->load->view('guru_form', $data);
+    $this->load->view('template/footer');
+  }
+
+  public function input_aksi()
+  {
+    $id_histori = $this->input->post('id_histori');
+    if ($id_histori == "") {
+      $data = array(
+        'id_siswa'      => $this->input->post('nis'),
+        'id_kj'    => $this->input->post('id_KJ'),
+        'id_tahun_ajar'       => $this->input->post('tahun_ajaran')
+      );
+      $this->Histori_kelas_model->input_data($data);
+    } else {
+      $data = array(
+        'id_kj'    => $this->input->post('id_KJ'),
+        'id_tahun_ajar'       => $this->input->post('tahun_ajaran')
+      );
+
+      $this->Histori_kelas_model->update_data(['id_histori' => $id_histori], $data);
+    }
+
+    $this->session->set_flashdata('flash', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data berhasil di tambahkan!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>');
+    redirect('siswa');
+  }
+
+  public function update($id)
+  {
+    $where = array('id_guru' => $id);
+    $data['guru'] = $this->guru_model->edit_data(
+      $where,
+      'guru'
+    )->result();
+    $this->load->view('template/header');
+    $this->load->view('template/sidebar');
+    $this->load->view('guru_update', $data);
+    $this->load->view('template/footer');
+  }
+
+  public function update_aksi($id)
+  {
+    // $id = $this->input->post('id_guru');
+
+    $nama_guru = $this->input->post('nama_guru');
+    $alamat = $this->input->post('alamat');
+    $golongan = $this->input->post('golongan');
+    $spesialis = $this->input->post('spesialis');
+
+
+    $data = array(
+      // 'id_guru'    => $id,
+
+      'nama_guru'  => $nama_guru,
+      'alamat'     => $alamat,
+      'golongan'     => $golongan,
+      'spesialis'  => $spesialis
+
+    );
+    $where = array(
+      'id_guru' => $id
+    );
+
+    $this->guru_model->update_data($where, $data, 'guru');
+    $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil di Update!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>');
+    redirect('guru');
+  }
+  public function delete($id)
+  {
+    $where = array('id_guru' => $id);
+    $this->guru_model->hapus_data($where, 'guru');
+    $this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Data Berhasil di Hapus!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>');
+    redirect('guru');
+  }
+
+  public function opt_HistoriKelas()
+  {
+    $nis = $this->input->post('nis');
+    $id_kelas = $this->input->post('id_kelas');
+    $html = "<option>-- Pilih Kelas --</option>";
+    foreach ($this->Histori_kelas_model->tampil_data(['id_siswa' => $nis])->result() as $valueHistoriKelas) {
+      $selected = '';
+      if ($valueHistoriKelas->id_KJ == $id_kelas) {
+        $selected = 'selected';
+      }
+      $html .= "<option data-kelas='$valueHistoriKelas->Kelas' data-jurusan='$valueHistoriKelas->nama_jurusan' value='$valueHistoriKelas->id_KJ' $selected> $valueHistoriKelas->Kelas $valueHistoriKelas->nama_jurusan </option>";
+    }
+    echo json_encode($html);
+  }
+}

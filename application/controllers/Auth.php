@@ -74,6 +74,8 @@ class Auth extends CI_Controller
                 $sess_data['id_user'] = $dataWalikelas->nip;
                 $sess_data['Username'] = 'Wali Kelas ' . $dataWalikelas->id_KJ;
                 $sess_data['level'] = 'wali kelas';
+                $sess_data['tahun_ajar'] = $dataWalikelas->id_kp;
+                $sess_data['kelas'] = $dataWalikelas->id_KJ;
                 $this->session->set_userdata($sess_data);
                 redirect('dashboard');
             } else {

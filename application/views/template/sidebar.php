@@ -1,22 +1,15 @@
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
                 <img class="image" border="0" src="<?php echo base_url('assets/img/Admin.png') ?>" width="50px">
                 <div class="sidebar-brand-text mx-3">SIPPBK</div>
-
             </a>
-
-
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="<?php echo base_url('dashboard') ?>">
@@ -39,7 +32,6 @@
                         <i class="fas fa-balance-scale"></i>
                         <span>Data Siswa</span></a>
                 </li>
-
             <?php } ?>
             <!-- Nav Item - Tables -->
             <?php if ($this->session->userdata('level') == 'admin' || $this->session->userdata('level') == 'user') { ?>
@@ -48,7 +40,6 @@
                         <i class="fas fa-balance-scale"></i>
                         <span>Konsultasi</span></a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo base_url('perekapan') ?>">
                         <i class="fas fa-clipboard-list"></i>
@@ -61,27 +52,24 @@
                         <span>Pelanggaran</span></a>
                 </li>
             <?php }
-
             if ($this->session->userdata('level') == 'wali kelas') { ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo base_url('konsul/detailSiswa') ?>">
+                    <a class="nav-link" href="<?php echo base_url('konsul') ?>">
                         <i class="fas fa-balance-scale"></i>
                         <span>Konsultasi</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo base_url('pelanggaran/detailPelanggaran') ?>">
+                    <a class="nav-link" href="<?php echo base_url('pelanggaran') ?>">
                         <i class="fas fa-balance-scale"></i>
                         <span>Pelanggaran</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo base_url('siswa/siswaDetail') ?>">
+                    <a class="nav-link" href="<?php echo base_url('siswa') ?>">
                         <i class="fas fa-balance-scale"></i>
                         <span>Data Siswa</span></a>
                 </li>
             <?php }
-
             if ($this->session->userdata('level') == 'admin') { ?>
-
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo base_url('kategori') ?>">
                         <i class="fas fa-book-reader"></i>

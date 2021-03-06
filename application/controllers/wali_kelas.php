@@ -9,6 +9,7 @@ class wali_kelas extends CI_Controller
         $this->load->library('form_validation');
         $this->load->model("wali_kelas_model");
         $this->load->model("jurusan_model");
+        $this->load->model("perekapan_model");
     }
 
 
@@ -17,6 +18,7 @@ class wali_kelas extends CI_Controller
 
         $data['kelas'] = $this->jurusan_model->tampil_data()->result();
         $data['tabel_walikelas'] = $this->wali_kelas_model->gabung();
+        $data['perekapan'] = $this->perekapan_model->tampil_data()->result();
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
         $this->load->view('wali_kelas', $data);
@@ -30,8 +32,6 @@ class wali_kelas extends CI_Controller
             'nama_walikelas'       => set_value('nama_walikelas'),
             'id_KJ'    => set_value('id_KJ'),
             'password'       => set_value('password'),
-
-
         );
         $data['jk'] = $this->jurusan_model->tampil_data()->result();
         $this->load->view('template/header');
@@ -47,19 +47,17 @@ class wali_kelas extends CI_Controller
         $nama_walikelas      = $this->input->post('nama_walikelas');
         $id_KJ      = $this->input->post('id_KJ');
         $password      = $this->input->post('password');
-
-
+        $tahun_ajar      = $this->input->post('tahun_ajaran');
 
         $this->_rules();
-
         if ($this->form_validation->run() == FALSE) {
             $data = array(
                 'id_walikelas'      => $id_walikelas,
                 'nip'    => $nip,
                 'nama_walikelas'       => $nama_walikelas,
                 'id_KJ'       => $id_KJ,
-                'password'       => $password
-
+                'password'       => $password,
+                'id_kp' => $tahun_ajar
             );
             $this->wali_kelas_model->input_data($data);
             $this->session->set_flashdata('flash', '<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -108,14 +106,14 @@ class wali_kelas extends CI_Controller
         $nama_walikelas = $this->input->post('nama_walikelas');
         $id_KJ = $this->input->post('id_KJ');
         $password = $this->input->post('password');
+        $tahun_ajar      = $this->input->post('tahun_ajaran');
 
         $data = array(
             'nip'    => $nip,
             'nama_walikelas'  => $nama_walikelas,
             'id_KJ'     => $id_KJ,
-            'password'     => $password
-
-
+            'password'     => $password,
+            'id_kp' => $tahun_ajar
         );
         $where = array(
             'id_walikelas' => $id
@@ -129,6 +127,7 @@ class wali_kelas extends CI_Controller
           </div>');
         redirect('wali_kelas');
     }
+
     public function delete($id)
     {
         $where = array('id_walikelas' => $id);
